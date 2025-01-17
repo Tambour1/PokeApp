@@ -1,13 +1,15 @@
 <script>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView } from "vue-router";
 </script>
 
 <template>
-  <header>
+  <div class="w-screen h-screen bg-gray-100">
+    <header class="bg-gray-800 text-white p-4">
       <nav>
-        <RouterLink to="/">Pokemons</RouterLink>    
+        <RouterLink to="/">Pokemons</RouterLink>
       </nav>
-  </header>
+    </header>
 
-  <RouterView />
+    <RouterView />
+  </div>
 </template>

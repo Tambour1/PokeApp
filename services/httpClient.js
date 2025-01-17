@@ -33,13 +33,12 @@ const request = async (endpoint, method = 'GET', body = null, isAuthRequest = fa
     }
 };
 
-const getPokemons = () => {
-    return request('/pokemon', 'GET');
+const getPokemons = (limit) => {
+    return request(`/pokemon?limit=${limit}`, 'GET');
 }
 
-const getPokemon = (pokemonName) => {
+const getPokemonByName = (pokemonName) => {
     return request(`/pokemon/${pokemonName}`, 'GET');
 };
 
-
-export {getPokemons, getPokemon};
+export {getPokemons, getPokemonById, getPokemonByName};
