@@ -1,8 +1,11 @@
 <script>
 import { getPokemonByName } from "../../services/httpClient";
-
+import PokeDetails from "./PokeDetails.vue";
 export default {
   name: "SearchPokemon",
+  components: {
+    PokeDetails,
+  },
   data() {
     return {
       search: "",
@@ -34,15 +37,7 @@ export default {
     </div>
 
     <div v-if="pokemon">
-      <h2>{{ pokemon.name }}</h2>
-      <img
-        :src="pokemon.sprites.front_default"
-        :alt="pokemon.name"
-        width="150"
-      />
-      <p><strong>Type(s):</strong> {{ pokemon.types.map(t => t.type.name).join(", ") }}</p>
-      <p><strong>Taille:</strong> {{ pokemon.height }}</p>
-      <p><strong>Poids:</strong> {{ pokemon.weight }}</p>
+      <PokeDetails :pokemon="pokemon"></PokeDetails>      
     </div>
   </div>
 </template>
