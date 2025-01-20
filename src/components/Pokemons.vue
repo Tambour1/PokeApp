@@ -13,7 +13,7 @@ export default {
   },
   methods: {
     async fetchPokemons() {
-      const pokemonList = await getPokemons(1);
+      const pokemonList = await getPokemons(5);
       const promises = pokemonList.results.map(pokemon => fetch(pokemon.url).then(res => res.json()));
       this.pokemons = await Promise.all(promises);
     }
@@ -27,7 +27,7 @@ export default {
 <template>
   <div class="bg-gray-100 w-screen h-screen">
     <h1>Pokemons</h1>
-    <ul>
+    <ul class="flex flex-wrap justify-center bg-gray-100">
       <li v-for="pokemon in pokemons" :key="pokemon.id">
         <PokeCard :pokemon="pokemon"></PokeCard>
       </li>
