@@ -50,6 +50,7 @@ export default {
 <template>
   <div class="border-8 rounded-md border-yellow-200 p-4 h-96 w-72" 
   :style="{ backgroundColor: pokemonColor }"
+  @click="$router.push({ name: 'PokeDetails', params: { id: pokemon.id } })"
   >
   <!-- Nom du Pokémon et icône de type -->
   <div class="flex items-center justify-between mb-4">

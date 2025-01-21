@@ -3,7 +3,7 @@ import { RouterLink, RouterView } from "vue-router";
 </script>
 
 <template>
-  <div class="w-screen h-screen">
+  <div class="bg-gray-100 w-screen h-screen">
     <header class="bg-gray-800 text-white p-4">
       <nav>
         <RouterLink to="/">Pokemons</RouterLink>

@@ -37,7 +37,7 @@ export default {
     </div>
 
     <div v-if="pokemon">
-      <PokeDetails :pokemon="pokemon"></PokeDetails>      
+      <PokeDetails :id="pokemon.id"></PokeDetails>      
     </div>
   </div>
 </template>

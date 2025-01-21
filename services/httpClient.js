@@ -41,4 +41,8 @@ const getPokemonByName = (pokemonName) => {
     return request(`/pokemon/${pokemonName}`, 'GET');
 };
 
-export {getPokemons, getPokemonByName};
+const getPokemonById = (pokemonId) => {
+    return request(`/pokemon/${pokemonId}`, 'GET');
+};
+
+export {getPokemons, getPokemonByName, getPokemonById};
