@@ -8,6 +8,9 @@ export default {
     },
     convertPrice(price) {
       return `${price / 10} €`
+    },
+    firstCapitalLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
     }
   },
 };

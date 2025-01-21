@@ -12,7 +12,7 @@ export default {
       loading : true,
       error: null,
       currentPage: 1,
-      pageSize: 1,
+      pageSize: 12,
       total: 0,
     };
   },
