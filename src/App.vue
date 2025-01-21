@@ -1,5 +1,6 @@
-<script>
+<script setup>
 import { RouterLink, RouterView } from "vue-router";
+import { ShoppingCartIcon } from '@heroicons/vue/24/solid';
 </script>
 
 <template>
@@ -12,7 +13,7 @@ import { RouterLink, RouterView } from "vue-router";
         </div>
         
         <!-- Menu de navigation -->
-        <div class="space-x-6">
+        <div class="flex space-x-4 justify-between items-center">
           <RouterLink 
             to="/" 
             class="text-white text-lg font-semibold hover:text-gray-200 hover:bg-transparent"
@@ -24,6 +25,11 @@ import { RouterLink, RouterView } from "vue-router";
             class="text-white text-lg font-semibold hover:text-gray-200 hover:bg-transparent"
           >
             Trouver un Pokémon
+          </RouterLink>
+          <RouterLink 
+            to="/cart" 
+            class=""> 
+            <ShoppingCartIcon class="w-9 text-white hover:text-gray-200 hover:bg-transparent"></ShoppingCartIcon>          
           </RouterLink>
         </div>
       </nav>

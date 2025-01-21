@@ -1,8 +1,10 @@
 <script>
 import { RouterLink } from "vue-router";
 import { getPokemonById } from "../../services/httpClient";
+import pokeMixins from "@/mixins/pokeMixins";
 export default {
   name: "PokeDetails",
+  mixins: [pokeMixins],
   props: {
     id: {
       type: String,
@@ -40,14 +42,6 @@ export default {
       if (baseStat > 100) return "#4caf50";
       if (baseStat > 50) return "#ffc107";
       return "#f44336";
-    },
-
-    getWeight() {
-      return this.pokemon.weight / 10;
-    },
-
-    getHeight() {
-      return this.pokemon.height / 10;
     },
   },
   mounted() {
@@ -100,13 +94,13 @@ export default {
       <!-- Les infos -->
       <div class="flex justify-around bg-gray-100 border-t border-b py-4">
         <div class="flex flex-col w-1/3 justify-around">
-          <span class="text-gray-800 text-lg">{{ getWeight() }} kg</span>
+          <span class="text-gray-800 text-lg">{{ convertWeight(pokemon.weight) }}</span>
           <span class="text-gray-400 text-sm">Poids</span>
         </div>
         <div
           class="flex flex-col justify-around w-1/3 border-l-2 border-r-2 border-gray-300"
         >
-          <span class="text-gray-800 text-lg">{{ getHeight() }} m</span>
+          <span class="text-gray-800 text-lg">{{ convertHeight(pokemon.height) }}</span>
           <span class="text-gray-400 text-sm">Taille</span>
         </div>
         <div class="flex flex-col w-1/3 justify-around">

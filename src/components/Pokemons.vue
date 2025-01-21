@@ -12,7 +12,7 @@ export default {
       loading : true,
       error: null,
       currentPage: 1,
-      pageSize: 12,
+      pageSize: 1,
       total: 0,
     };
   },
@@ -57,7 +57,7 @@ export default {
     </div>
 
     <!-- Pokemons -->
-  <div v-else>
+  <div v-else class="bg-secondary mt-4">
     <ul class="flex flex-wrap justify-center bg-secondary gap-4 p-4">
       <li v-for="pokemon in pokemons" :key="pokemon.id">
         <PokeCard :pokemon="pokemon" />
@@ -65,7 +65,7 @@ export default {
     </ul>
 
     <!-- Pagination -->
-    <div class="flex justify-center mt-4">
+    <div class="flex justify-center mt-3 pb-12">
       <button
         @click="changePage(currentPage - 1)"
         :disabled="currentPage === 1"
