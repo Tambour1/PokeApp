@@ -1,6 +1,8 @@
 <script>
 import { useCartStore } from '../stores/cartStore';
 import pokeMixins from '../mixins/pokeMixins';
+import { useNotificationStore } from '../stores/notificationStore';
+
 export default {
   name: "PokeCard",
   mixins: [pokeMixins],
@@ -46,6 +48,7 @@ export default {
     // Ajoute la carte au panier
     addToCart() {
       const cartStore = useCartStore();
+      const notificationStore = useNotificationStore();
       const item = {
         id: this.pokemon.id,
         name: this.pokemon.name,
@@ -54,6 +57,7 @@ export default {
         sprite: this.pokemon.sprites.front_default,
       };
       cartStore.addItem(item);
+      notificationStore.addNotification(`${this.firstCapitalLetter(this.pokemon.name)} ajouté au panier`);
     },
   },
   mounted() {

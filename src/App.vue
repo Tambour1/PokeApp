@@ -2,17 +2,22 @@
 import { RouterLink, RouterView } from "vue-router";
 import { ShoppingCartIcon } from '@heroicons/vue/24/solid';
 import { useCartStore } from "./stores/cartStore";
+import { useNotificationStore } from "./stores/notificationStore";
+import Notification from "./components/Notification.vue";
 export default {
   name: 'App',
   components: {
     RouterLink,
     RouterView,
     ShoppingCartIcon,
+    Notification,
   },
   data() {
     const cartStore = useCartStore();
+    const notificationStore = useNotificationStore();
     return {
       cartStore,
+      notificationStore,
     };
   },
 };
@@ -21,10 +26,16 @@ export default {
 <template>
   <div class="bg-secondary w-screen h-screen font-pokemon">
     <header class="bg-primary text-white px-8 py-2 shadow-md sticky top-0 z-10">
-      <nav class="flex justify-between items-center">
+      <nav class="flex justify-between items-center relative">
         <!-- Pokeapp -->
-        <div class="text-3xl font-bold">
+        <div class="text-3xl font-bold relative">
           <RouterLink to="/" class="text-white hover:text-gray-200 hover:bg-transparent">PokeAPP</RouterLink>
+          <!-- Notifications -->
+          <div class="absolute">
+            <div v-for="notification in notificationStore.notifications" :key="notification.id" class="mb-2">
+              <Notification :message="notification.message" />
+            </div>
+          </div>
         </div>
 
         <!-- Menu de navigation -->
@@ -42,7 +53,7 @@ export default {
             Trouver un Pokémon
           </RouterLink>
           <div class="relative">
-            <RouterLink to="/cart" class=" hover:bg-transparent ">
+            <RouterLink to="/cart" class="hover:bg-transparent">
               <ShoppingCartIcon class="w-9 text-white hover:text-gray-200"></ShoppingCartIcon>
             </RouterLink>
             <span 
@@ -55,7 +66,9 @@ export default {
         </div>
       </nav>
     </header>
+
     <RouterView />
   </div>
 </template>
+
 
