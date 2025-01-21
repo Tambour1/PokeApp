@@ -11,20 +11,32 @@ export default {
       pokemons: [],
       loading : true,
       error: null,
+      currentPage: 1,
+      pageSize: 12,
+      total: 0,
     };
   },
   methods: {
     async fetchPokemons() {
       try {
-        const pokemonList = await getPokemons(6);
+        this.loading = true;
+        const offset = (this.currentPage - 1) * this.pageSize;
+        const pokemonList = await getPokemons(this.pageSize, offset);
+        
+        this.totalPokemons = pokemonList.count;
+
         const promises = pokemonList.results.map(pokemon => fetch(pokemon.url).then(res => res.json()));
         this.pokemons = await Promise.all(promises);
-        this.loading = false;
       } catch (error) {
         this.error = "Impossible de récupérer la liste des Pokémons.";
+      } finally {
         this.loading = false;
       }
-    }
+    },
+    changePage(newPage) {
+      this.currentPage = newPage;
+      this.fetchPokemons();
+    },
   },
   mounted() {
     this.fetchPokemons();
@@ -45,10 +57,31 @@ export default {
     </div>
 
     <!-- Pokemons -->
-    <ul v-else class="flex flex-wrap justify-center bg-secondary gap-4 p-4">
+  <div v-else>
+    <ul class="flex flex-wrap justify-center bg-secondary gap-4 p-4">
       <li v-for="pokemon in pokemons" :key="pokemon.id">
         <PokeCard :pokemon="pokemon" />
       </li>
     </ul>
+
+    <!-- Pagination -->
+    <div class="flex justify-center mt-4">
+      <button
+        @click="changePage(currentPage - 1)"
+        :disabled="currentPage === 1"
+        class="px-4 py-2 mx-2 bg-blue-500 text-white rounded disabled:opacity-50"
+      >
+        Précédent
+      </button>
+      <span class="text-gray-900 px-4 py-2 mx-2">Page {{ currentPage }}</span>
+      <button
+        @click="changePage(currentPage + 1)"
+        :disabled="currentPage * pageSize >= totalPokemons"
+        class="px-4 py-2 mx-2 bg-blue-500 text-white rounded disabled:opacity-50"
+      >
+        Suivant
+      </button>
+    </div>
+  </div>
 </template>
 

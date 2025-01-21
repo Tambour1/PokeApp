@@ -33,9 +33,9 @@ const request = async (endpoint, method = 'GET', body = null, isAuthRequest = fa
     }
 };
 
-const getPokemons = (limit) => {
-    return request(`/pokemon?limit=${limit}`, 'GET');
-}
+const getPokemons = (limit, offset = 0) => {
+    return request(`/pokemon?limit=${limit}&offset=${offset}`, 'GET');
+};  
 
 const getPokemonByName = (pokemonName) => {
     return request(`/pokemon/${pokemonName}`, 'GET');

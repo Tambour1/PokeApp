@@ -48,7 +48,7 @@ export default {
 </script>
 
 <template>
-  <div class="border-8 rounded-md border-yellow-200 p-4 h-96 w-72" 
+  <div class="border-8 rounded-md border-yellow-200 p-4 h-96 w-72 cursor-pointer" 
   :style="{ backgroundColor: pokemonColor }"
   @click="$router.push({ name: 'PokeDetails', params: { id: pokemon.id } })"
   >
