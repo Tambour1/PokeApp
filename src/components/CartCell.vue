@@ -1,8 +1,8 @@
 <script>
-import pokeMixins from "../mixins/pokeMixins";
+import utilsMixin from "../mixins/utilsMixin";
 export default {
     name: "CartCell",
-    mixins: [pokeMixins],
+    mixins: [utilsMixin],
     props: {
         item: {
             type: Object,
@@ -31,7 +31,9 @@ export default {
     <div class="flex justify-between items-center p-4 border rounded-lg shadow-sm">
         <!-- Image et Nom -->
         <div class="w-56 flex items-center justify-between">
-            <img width="120" :src="item.sprite" :alt="item.name" />
+            <img width="120" :src="item.sprite" :alt="item.name"
+                @click="$router.push({ name: 'PokeDetails', params: { id: item.id } })"
+                class="cursor-pointer" />
             <p class="text-lg font-semibold text-gray-500">{{ item.name }}</p>
         </div>
 
@@ -43,7 +45,7 @@ export default {
             </button>
             <span class="text-xl font-semibold text-gray-800">{{
                 item.quantity
-                }}</span>
+            }}</span>
             <button @click="emitIncrease"
                 class="text-2xl font-semibold text-gray-700 bg-gray-200 rounded-full px-3 py-1 hover:bg-gray-300">
                 +

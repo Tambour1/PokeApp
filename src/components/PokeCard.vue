@@ -1,11 +1,10 @@
 <script>
-import { useCartStore } from '../stores/cartStore';
-import pokeMixins from '../mixins/pokeMixins';
-import { useNotificationStore } from '../stores/notificationStore';
+import utilsMixin from '../mixins/utilsMixin';
+import cartMixin from '@/mixins/cartMixin';
 
 export default {
   name: "PokeCard",
-  mixins: [pokeMixins],
+  mixins: [utilsMixin, cartMixin],
   props: {
     pokemon: {
       type: Object,
@@ -44,20 +43,6 @@ export default {
     // Récupère la couleur associée à un type
     getTypeColor(type) {
       return this.typeColors[type] || "white";
-    },
-    // Ajoute la carte au panier
-    addToCart() {
-      const cartStore = useCartStore();
-      const notificationStore = useNotificationStore();
-      const item = {
-        id: this.pokemon.id,
-        name: this.pokemon.name,
-        price: this.pokemon.base_experience ? this.pokemon.base_experience : 1,
-        quantity: 1,
-        sprite: this.pokemon.sprites.front_default,
-      };
-      cartStore.addItem(item);
-      notificationStore.addNotification(`${this.firstCapitalLetter(this.pokemon.name)} ajouté au panier`);
     },
   },
   mounted() {
@@ -100,7 +85,7 @@ export default {
   </div>
   <!-- Ajouter au panier -->
   <div class="flex justify-center mt-5">
-    <button @click="addToCart" class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600">
+    <button @click="addToCart(pokemon)" class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600">
       Ajouter au panier
     </button>
   </div>

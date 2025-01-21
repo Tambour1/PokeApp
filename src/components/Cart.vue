@@ -1,11 +1,11 @@
 <script>
 import { useCartStore } from '../stores/cartStore';
 import CartCell from './CartCell.vue';
-import pokeMixins from '../mixins/pokeMixins';
+import utilsMixin from '../mixins/utilsMixin';
 
 export default {
   name: 'Cart',
-  mixins: [pokeMixins],
+  mixins: [utilsMixin],
   components: {
     CartCell,
   },
