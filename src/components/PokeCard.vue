@@ -57,44 +57,68 @@ export default {
 
 <template>
   <div class="flex flex-col justify-center w-72">
-  <div
-    class="border-8 rounded-md border-yellow-200 p-4 h-96 transition-transform transform hover:scale-105 hover:rotate-2 hover:shadow-xl"
-    :style="{ backgroundColor: pokemonColor }">
-    
-    <!-- Nom du Pokémon et icône de type -->
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl font-bold text-white">{{ firstCapitalLetter(pokemon.name) }}</h2>
-      <img :src="`/src/assets/types-icons/${primaryType}.png`" alt="Type Icon" width="30" height="30" class="ml-2" />
+    <div
+      class="border-8 rounded-md border-yellow-200 p-4 h-96 transition-transform transform hover:scale-105 hover:rotate-2 hover:shadow-xl"
+      :style="{ backgroundColor: pokemonColor }">
+
+      <!-- Nom du Pokémon et icône de type -->
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-white">{{ firstCapitalLetter(pokemon.name) }}</h2>
+        <img :src="`/src/assets/types-icons/${primaryType}.png`" alt="Type Icon" width="30" height="30" class="ml-2" />
+      </div>
+
+      <!-- Image du Pokémon -->
+      <img width="150" :src="pokemon.sprites.front_default" :alt="pokemon.name"
+        class="bg-white mx-auto border-4 rounded-md border-gray-300 cursor-pointer"
+        @click="$router.push({ name: 'PokeDetails', params: { id: pokemon.id } })" />
+
+      <!-- Informations du Pokémon -->
+      <div class="flex items-center justify-around bg-gray-100 rounded-md mt-1 text-gray-500 text-xs p-1">
+        <p>N°{{ pokemon.id }}</p>
+        <p>Taille: {{ convertHeight(pokemon.height) }}</p>
+        <p>Poids: {{ convertWeight(pokemon.weight) }}</p>
+      </div>
+
+      <!-- Types du Pokémon -->
+      <div class="flex mx-auto text-center mt-4 justify-around">
+        <p v-for="type in pokemon.types" :style="{ backgroundColor: getTypeColor(type.type.name) }"
+          class="rounded-lg border text-white font-semibold p-1">{{ type.type.name.toUpperCase() }}</p>
+      </div>
+
+      <!-- Prix -->
+      <p class="text-center text-white text-2xl font-semibold mt-4 ml-1">{{ convertPrice(pokemon.base_experience) }}</p>
+
+      <!-- Dans le panier -->
+      <transition name="shopping-icon">
+        <ShoppingBagIcon v-if="isPokemonInCart(pokemon.id)" v-cart-icon="isPokemonInCart(pokemon.id)" />
+      </transition>
     </div>
-
-    <!-- Image du Pokémon -->
-    <img width="150" :src="pokemon.sprites.front_default" :alt="pokemon.name"
-      class="bg-white mx-auto border-4 rounded-md border-gray-300 cursor-pointer"
-      @click="$router.push({ name: 'PokeDetails', params: { id: pokemon.id } })" />
-
-    <!-- Informations du Pokémon -->
-    <div class="flex items-center justify-around bg-gray-100 rounded-md mt-1 text-gray-500 text-xs p-1">
-      <p>N°{{ pokemon.id }}</p>
-      <p>Taille: {{ convertHeight(pokemon.height) }}</p>
-      <p>Poids: {{ convertWeight(pokemon.weight) }}</p>
-    </div>
-
-    <!-- Types du Pokémon -->
-    <div class="flex mx-auto text-center mt-4 justify-around">
-      <p v-for="type in pokemon.types" :style="{ backgroundColor: getTypeColor(type.type.name) }"
-        class="rounded-lg border text-white font-semibold p-1">{{ type.type.name.toUpperCase() }}</p>
-    </div>
-
-    <!-- Prix -->
-    <p class="text-center text-white text-2xl font-semibold mt-4 ml-1">{{ convertPrice(pokemon.base_experience) }}</p>
-
-    <!-- Dans le panier -->
-    <ShoppingBagIcon v-if="isPokemonInCart(pokemon.id)" class="w-8 text-gray-500 absolute left-4 bottom-3 rounded-full bg-secondary p-1" />
-
-  </div>
-  <!-- Ajouter au panier -->  
-    <button @click="addPokemonToCart(pokemon)" class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600 my-5 mx-8">
+    <!-- Ajouter au panier -->
+    <button @click="addPokemonToCart(pokemon)"
+      class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600 my-5 mx-8">
       Ajouter au panier
     </button>
   </div>
 </template>
+
+<style scoped>
+.shopping-icon-enter-active {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.shopping-icon-leave-active {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.shopping-icon-enter-from,
+.shopping-icon-leave-to {
+  transform: scale(0);
+  opacity: 0;
+}
+
+.shopping-icon-enter-to,
+.shopping-icon-leave-from {
+  transform: scale(1);
+  opacity: 1;
+}
+</style>
