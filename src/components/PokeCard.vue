@@ -13,6 +13,10 @@ export default {
       type: Object,
       required: true,
     },
+    isPreview: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -90,13 +94,13 @@ export default {
 
       <!-- Dans le panier -->
       <transition name="shopping-icon">
-        <ShoppingBagIcon v-if="isPokemonInCart(pokemon.id)" 
+        <ShoppingBagIcon v-if="isPokemonInCart(pokemon.id) && !isPreview" 
         v-cart-icon="isPokemonInCart(pokemon.id)" 
         class="left-4 bottom-3"/>
       </transition>
     </div>
     <!-- Ajouter au panier -->
-    <button @click="addPokemonToCart(pokemon)"
+    <button v-if="!isPreview" @click="addPokemonToCart(pokemon)"
       class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600 my-5 mx-8">
       Ajouter au panier
     </button>
