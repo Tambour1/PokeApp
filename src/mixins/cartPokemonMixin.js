@@ -2,11 +2,17 @@ import { useCartStore } from '../stores/cartStore';
 import { useNotificationStore } from '../stores/notificationStore';
 
 export default {
+  data() {
+    const cartStore = useCartStore();
+    const notificationStore = useNotificationStore();
+    return {
+      cartStore,
+      notificationStore,
+    };
+  },
   methods: {
     // Ajouter un pokemon au panier
     addPokemonToCart(pokemon) {
-      const cartStore = useCartStore();
-      const notificationStore = useNotificationStore();
       const item = {
         id: pokemon.id,
         name: pokemon.name,
@@ -14,14 +20,30 @@ export default {
         quantity: 1,
         sprite: pokemon.sprites.front_default,
       };
-      cartStore.addItem(item);
-      notificationStore.addNotification(`${this.firstCapitalLetter(pokemon.name)} ajouté au panier`);
+      this.cartStore.addItem(item);
+      this.notificationStore.addNotification(`${this.firstCapitalLetter(pokemon.name)} ajouté au panier`);
     },
 
     // Vérifie si un pokemon est dans le panier
     isPokemonInCart(pokemonId) {
-      const cartStore = useCartStore();
-      return cartStore.isInCart(pokemonId);
+      return this.cartStore.isInCart(pokemonId);
     }
   },
+
+  computed: {
+    // Pokemons dans le panier
+    pokemonsInCart() {
+      return this.cartStore.items;
+    },
+
+    // Nombre total de pokemons dans le panier
+    totalPokemonsInCart() {
+      return this.cartStore.totalItems;
+    },
+
+    // Prix total des pokemons dans le panier
+    totalPricePokemonsInCart() {
+      return this.cartStore.totalPrice;
+    }
+  }
 };
