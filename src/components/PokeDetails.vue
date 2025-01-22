@@ -65,13 +65,13 @@ export default {
 
 <template>
   <!-- Loading -->
-  <div v-if="loading" class="flex flex-col items-center justify-center h-screen">
+  <div v-if="loading" class="flex flex-col items-center justify-center h-screen bg-secondary">
     <div class="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mb-4"></div>
     <p class="text-gray-500 text-xl font-bold">Chargement...</p>
   </div>
 
   <!-- Error -->
-  <div v-else-if="error" class="flex items-center justify-center h-screen">
+  <div v-else-if="error" class="flex items-center justify-center">
     <p class="text-red-500 text-xl font-bold">{{ error }}</p>
   </div>
 

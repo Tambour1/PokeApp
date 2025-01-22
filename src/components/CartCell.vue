@@ -28,12 +28,12 @@ export default {
 </script>
 
 <template>
-    <div class="flex justify-between items-center p-4 border rounded-lg shadow-sm">
+    <div class="flex flex-col sm:flex-row justify-between items-center p-4 border rounded-lg shadow-sm truncate">
         <!-- Image et Nom -->
         <div class="w-56 flex items-center justify-between">
-            <img width="120" :src="item.sprite" :alt="item.name"
+            <img :src="item.sprite" :alt="item.name"
                 @click="$router.push({ name: 'PokeDetails', params: { id: item.id } })"
-                class="cursor-pointer" />
+                class="cursor-pointer w-32 h-32" />
             <p class="text-lg font-semibold text-gray-500">{{ item.name }}</p>
         </div>
 
