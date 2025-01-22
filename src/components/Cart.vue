@@ -72,7 +72,7 @@ export default {
       <!-- Résumé du panier -->
       <div class="mt-8 pt-6">
         <div class="flex justify-between text-lg">
-          <span class="font-semibold text-gray-700">Nombre d'articles :</span>
+          <span class="font-semibold text-gray-700">Nombre de Pokémons :</span>
           <span class="text-gray-700">{{ totalItems }}</span>
         </div>
         <div class="flex justify-between text-lg mt-2">

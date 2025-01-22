@@ -1,10 +1,13 @@
 <script>
 import utilsMixin from '../mixins/utilsMixin';
-import cartMixin from '@/mixins/cartMixin';
-
+import cartPokemonMixin from '@/mixins/cartPokemonMixin';
+import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
 export default {
   name: "PokeCard",
-  mixins: [utilsMixin, cartMixin],
+  components: {
+    ShoppingBagIcon,
+  },
+  mixins: [utilsMixin, cartPokemonMixin],
   props: {
     pokemon: {
       type: Object,
@@ -57,6 +60,7 @@ export default {
   <div
     class="border-8 rounded-md border-yellow-200 p-4 h-96 transition-transform transform hover:scale-105 hover:rotate-2 hover:shadow-xl"
     :style="{ backgroundColor: pokemonColor }">
+    
     <!-- Nom du Pokémon et icône de type -->
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-xl font-bold text-white">{{ firstCapitalLetter(pokemon.name) }}</h2>
@@ -83,9 +87,13 @@ export default {
 
     <!-- Prix -->
     <p class="text-center text-white text-2xl font-semibold mt-4 ml-1">{{ convertPrice(pokemon.base_experience) }}</p>
+
+    <!-- Dans le panier -->
+    <ShoppingBagIcon v-if="isPokemonInCart(pokemon.id)" class="w-8 text-gray-500 absolute left-4 bottom-3 rounded-full bg-secondary p-1" />
+
   </div>
   <!-- Ajouter au panier -->  
-    <button @click="addToCart(pokemon)" class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600 my-5 mx-8">
+    <button @click="addPokemonToCart(pokemon)" class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600 my-5 mx-8">
       Ajouter au panier
     </button>
   </div>

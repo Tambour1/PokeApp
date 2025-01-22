@@ -4,7 +4,7 @@ import { useNotificationStore } from '../stores/notificationStore';
 export default {
   methods: {
     // Ajouter un pokemon au panier
-    addToCart(pokemon) {
+    addPokemonToCart(pokemon) {
       const cartStore = useCartStore();
       const notificationStore = useNotificationStore();
       const item = {
@@ -17,5 +17,11 @@ export default {
       cartStore.addItem(item);
       notificationStore.addNotification(`${this.firstCapitalLetter(pokemon.name)} ajouté au panier`);
     },
+
+    // Vérifie si un pokemon est dans le panier
+    isPokemonInCart(pokemonId) {
+      const cartStore = useCartStore();
+      return cartStore.isInCart(pokemonId);
+    }
   },
 };

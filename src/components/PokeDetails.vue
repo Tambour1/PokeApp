@@ -2,10 +2,10 @@
 import { RouterLink } from "vue-router";
 import { getPokemonById } from "../../services/httpClient";
 import utilsMixin from "@/mixins/utilsMixin";
-import cartMixin from "@/mixins/cartMixin";
+import cartPokemonMixin from "@/mixins/cartPokemonMixin";
 export default {
   name: "PokeDetails",
-  mixins: [utilsMixin, cartMixin],
+  mixins: [utilsMixin, cartPokemonMixin],
   components: {
     RouterLink,
   },
@@ -120,7 +120,7 @@ export default {
   </div>
   <!-- Ajouter au panier -->
   <div class="flex justify-center mt-5">
-      <button @click="addToCart(pokemon)" class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600">
+      <button @click="addPokemonToCart(pokemon)" class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600">
         Ajouter au panier
       </button>
     </div>

@@ -42,6 +42,11 @@ export const useCartStore = defineStore('cart', {
     clearCart() {
       this.items = [];
     },
+
+    // Vérifier si un item est dans le panier
+    isInCart(itemId) {
+      return this.items.some((item) => item.id === itemId);
+    }
   },
 
   // Getters
