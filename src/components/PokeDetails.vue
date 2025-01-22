@@ -3,11 +3,13 @@ import { RouterLink } from "vue-router";
 import { getPokemonById } from "../../services/httpClient";
 import utilsMixin from "@/mixins/utilsMixin";
 import cartPokemonMixin from "@/mixins/cartPokemonMixin";
+import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
 export default {
   name: "PokeDetails",
   mixins: [utilsMixin, cartPokemonMixin],
   components: {
     RouterLink,
+    ShoppingBagIcon,
   },
   props: {
     id: {
@@ -81,10 +83,14 @@ export default {
     </header>
     <!-- L'image du pokemon -->
     <img :src="pokemon.sprites.front_default" :alt="pokemon.name" class="w-52 h-52 m-auto mt-6" />
+
     <!-- Les types -->
-    <div class="flex justify-center mb-4 space-x-8">
-      <img v-for="(type, index) in typesSprites" :src="type" :alt="pokemon.types[index].type.name"
-        class="w-16 h-6" />
+    <div class="flex justify-center mb-4 space-x-8 relative">
+      <img v-for="(type, index) in typesSprites" :src="type" :alt="pokemon.types[index].type.name" class="w-16 h-6" />
+      <!-- Dans le panier -->
+      <transition name="shopping-icon">
+        <ShoppingBagIcon v-if="isPokemonInCart(pokemon.id)" v-cart-icon="isPokemonInCart(pokemon.id)" class="right-6" />
+      </transition>
     </div>
     <!-- Les infos -->
     <div class="flex justify-around bg-gray-100 border-t border-b py-4">
@@ -105,7 +111,7 @@ export default {
       <div v-for="stat in pokemon.stats" class="flex items-center mb-2">
         <span class="flex-1 text-gray-500 text-base">{{
           stat.stat.name.toUpperCase()
-        }}</span>
+          }}</span>
         <div class="flex-auto h-2 bg-gray-200 rounded-lg overflow-hidden mx-2">
           <div class="h-full" :style="{
             width: `${stat.base_stat}%`,
@@ -114,14 +120,36 @@ export default {
         </div>
         <span class="flex-1 text-gray-500 text-base">{{
           stat.base_stat
-        }}</span>
+          }}</span>
       </div>
-    </div>    
+    </div>
   </div>
   <!-- Ajouter au panier -->
   <div class="flex justify-center mt-5">
-      <button @click="addPokemonToCart(pokemon)" class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600">
-        Ajouter au panier
-      </button>
-    </div>
+    <button @click="addPokemonToCart(pokemon)" class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600">
+      Ajouter au panier
+    </button>
+  </div>
 </template>
+
+<style scoped>
+.shopping-icon-enter-active {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.shopping-icon-leave-active {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.shopping-icon-enter-from,
+.shopping-icon-leave-to {
+  transform: scale(0);
+  opacity: 0;
+}
+
+.shopping-icon-enter-to,
+.shopping-icon-leave-from {
+  transform: scale(1);
+  opacity: 1;
+}
+</style>

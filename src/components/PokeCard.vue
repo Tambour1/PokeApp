@@ -90,7 +90,9 @@ export default {
 
       <!-- Dans le panier -->
       <transition name="shopping-icon">
-        <ShoppingBagIcon v-if="isPokemonInCart(pokemon.id)" v-cart-icon="isPokemonInCart(pokemon.id)" />
+        <ShoppingBagIcon v-if="isPokemonInCart(pokemon.id)" 
+        v-cart-icon="isPokemonInCart(pokemon.id)" 
+        class="left-4 bottom-3"/>
       </transition>
     </div>
     <!-- Ajouter au panier -->
