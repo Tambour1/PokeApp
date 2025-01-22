@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Pokemons from "@/components/Pokemons.vue";
-import SearchPokemon from "@/components/SearchPokemon.vue";
 import PokemonDetails from "@/components/PokeDetails.vue";
 import Cart from "@/components/Cart.vue";
 
@@ -11,11 +10,6 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: Pokemons,
-    },
-    {
-      path: "/pokemon",
-      name: "pokemon",
-      component : SearchPokemon 
     },
     {
       path: "/pokemon/:id",

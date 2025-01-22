@@ -53,8 +53,9 @@ export default {
 </script>
 
 <template>
+  <div class="flex flex-col justify-center w-72">
   <div
-    class="border-8 rounded-md border-yellow-200 p-4 h-96 w-72 transition-transform transform hover:scale-105 hover:rotate-2 hover:shadow-xl"
+    class="border-8 rounded-md border-yellow-200 p-4 h-96 transition-transform transform hover:scale-105 hover:rotate-2 hover:shadow-xl"
     :style="{ backgroundColor: pokemonColor }">
     <!-- Nom du Pokémon et icône de type -->
     <div class="flex items-center justify-between mb-4">
@@ -83,9 +84,8 @@ export default {
     <!-- Prix -->
     <p class="text-center text-white text-2xl font-semibold mt-4 ml-1">{{ convertPrice(pokemon.base_experience) }}</p>
   </div>
-  <!-- Ajouter au panier -->
-  <div class="flex justify-center mt-5">
-    <button @click="addToCart(pokemon)" class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600">
+  <!-- Ajouter au panier -->  
+    <button @click="addToCart(pokemon)" class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600 my-5 mx-8">
       Ajouter au panier
     </button>
   </div>
