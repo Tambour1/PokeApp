@@ -1,7 +1,9 @@
 import { useCartStore } from '../stores/cartStore';
 import { useNotificationStore } from '../stores/notificationStore';
+import utilsMixin from './utilsMixin';
 
 export default {
+  mixins: [utilsMixin],
   data() {
     const cartStore = useCartStore();
     const notificationStore = useNotificationStore();
@@ -25,8 +27,8 @@ export default {
     },
 
     // Vérifie si un pokemon est dans le panier
-    isPokemonInCart(pokemonId) {
-      return this.cartStore.isInCart(pokemonId);
+    isPokemonInCart(pokemonId, sprite) {
+      return this.cartStore.isInCart(pokemonId, sprite);
     }
   },
 

@@ -10,7 +10,7 @@ export const useCartStore = defineStore('cart', {
   actions: {
     // Ajouter un item au panier
     addItem(item) {
-      const existingItem = this.items.find((i) => i.id === item.id);
+      const existingItem = this.items.find((i) => i.id === item.id && i.sprite === item.sprite);
       if (existingItem) {
         existingItem.quantity += item.quantity || 1;
       } else {
@@ -18,34 +18,37 @@ export const useCartStore = defineStore('cart', {
       }
     },
     // Supprimer un item du panier
-    removeItem(itemId) {
-      this.items = this.items.filter((item) => item.id !== itemId);
+    removeItem(itemId, sprite) {
+      this.items = this.items.filter((item) => !(item.id === itemId && item.sprite === sprite));
     },
+    
     // Diminuer la quantité d'un item
-    decreaseQuantity(itemId) {
-      const existingItem = this.items.find((i) => i.id === itemId);
+    decreaseQuantity(itemId, sprite) {
+      const existingItem = this.items.find((i) => i.id === itemId && i.sprite === sprite);
       if (existingItem) {
         existingItem.quantity -= 1;
         if (existingItem.quantity <= 0) {
-          this.removeItem(itemId);
+          this.items = this.items.filter((item) => !(item.id === itemId && item.sprite === sprite));
         }
       }
     },
+    
     // Augmenter la quantité d'un item
-    increaseQuantity(itemId) {
-      const existingItem = this.items.find((i) => i.id === itemId);
+    increaseQuantity(itemId, sprite) {
+      const existingItem = this.items.find((i) => i.id === itemId && i.sprite === sprite);
       if (existingItem) {
         existingItem.quantity += 1;
       }
     },
+    
     // Vider le panier
     clearCart() {
       this.items = [];
     },
 
     // Vérifier si un item est dans le panier
-    isInCart(itemId) {
-      return this.items.some((item) => item.id === itemId);
+    isInCart(itemId, sprite) {
+      return this.items.some((item) => item.id === itemId && item.sprite === sprite);
     }
   },
 

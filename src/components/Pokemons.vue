@@ -1,13 +1,17 @@
 <script>
 import { getPokemons, getPokemonByName } from "../../services/httpClient";
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
+import cartPokemonMixin from '@/mixins/cartPokemonMixin';
 import PokeCard from "./PokeCard.vue";
+import SpriteSelector from './SpriteSelector.vue';
 
 export default {
   name: "Pokemons",
+  mixins: [cartPokemonMixin],
   components: {
     PokeCard,
     MagnifyingGlassIcon,
+    SpriteSelector,
   },
   data() {
     return {
@@ -19,9 +23,11 @@ export default {
       total: 0,
       search: "",
       foundPokemon: null,
+      currentPokemon: null,
     };
   },
   methods: {
+    // Récupère la liste des Pokémons
     async fetchPokemons() {
       try {
         this.loading = true;
@@ -32,14 +38,16 @@ export default {
         const promises = pokemonList.results.map((pokemon) =>
           fetch(pokemon.url).then((res) => res.json())
         );
-        this.pokemons = await Promise.all(promises);
-        this.foundPokemon = null; 
+        const pokemonsData = await Promise.all(promises);
+        this.pokemons = pokemonsData;
+        this.foundPokemon = null;
       } catch (error) {
         this.error = "Impossible de récupérer la liste des Pokémons.";
       } finally {
         this.loading = false;
       }
     },
+    // Recherche un Pokémon par son nom
     async searchPokemon() {
       if (!this.search.trim()) {
         this.error = "Veuillez saisir un nom de Pokémon.";
@@ -57,14 +65,55 @@ export default {
         this.loading = false;
       }
     },
+    // Change la page courante
     changePage(newPage) {
       this.currentPage = newPage;
       this.fetchPokemons();
     },
+    // Réinitialise la recherche
     clearSearch() {
       this.search = "";
       this.foundPokemon = null;
       this.fetchPokemons();
+    },
+    // Récupère tous les sprites d'un Pokémon
+    getSprites(pokemon) {
+      const allSprites = [];
+
+      if (pokemon.sprites.front_default) {
+        allSprites.push(pokemon.sprites.front_default);
+      }
+
+      if (pokemon.sprites.front_shiny) {
+        allSprites.push(pokemon.sprites.front_shiny);
+      }
+
+      if (pokemon.sprites.versions) {
+        Object.values(pokemon.sprites.versions).forEach((generation) => {
+          Object.values(generation).forEach((version) => {
+            if (version?.front_default) {
+              allSprites.push(version.front_default);
+            }
+          });
+        });
+      }
+
+      return allSprites;
+    },
+    // Ouvre le sélecteur de sprite
+    openSpriteSelector(pokemon) {
+      this.currentPokemon = pokemon;
+    },
+    // Ferme le sélecteur de sprite
+    closeSpriteSelector() {
+      this.currentPokemon = null;
+    },
+    // Met à jour le sprite du Pokémon
+    updatePokemonSprite(sprite) {
+      if (this.currentPokemon) {
+        this.currentPokemon.sprites.front_default = sprite;
+      }
+      this.closeSpriteSelector();
     },
   },
   mounted() {
@@ -73,32 +122,22 @@ export default {
 };
 </script>
 
+
+
 <template>
   <div class="bg-secondary w-screen h-screen">
     <!-- Barre de recherche -->
     <div class="mx-10 flex flex-col mt-8">
       <div class="flex items-center bg-white p-2 rounded-full border border-gray-300 shadow">
-        <!-- Icône de loupe -->
         <MagnifyingGlassIcon class="w-7 h-7 text-primary ml-2" />
-        <input
-          v-model="search"
-          type="text"
-          placeholder="Entrez le nom d'un Pokémon"
-          class="flex-1 p-2 pl-4 text-primary bg-transparent outline-none"
-        />
+        <input v-model="search" type="text" placeholder="Entrez le nom d'un Pokémon"
+          class="flex-1 p-2 pl-4 text-primary bg-transparent outline-none" />
       </div>
       <div class="flex items-center gap-4 mt-4">
-        <button
-          @click="searchPokemon"
-          class="px-4 py-2 bg-blue-500 text-white rounded"
-        >
+        <button @click="searchPokemon" class="px-4 py-2 bg-blue-500 text-white rounded">
           Rechercher
         </button>
-        <button
-          v-if="search"
-          @click="clearSearch"
-          class="px-4 py-2 bg-gray-400 text-white rounded"
-        >
+        <button v-if="search" @click="clearSearch" class="px-4 py-2 bg-gray-400 text-white rounded">
           Réinitialiser
         </button>
       </div>
@@ -106,9 +145,7 @@ export default {
 
     <!-- Loading -->
     <div v-if="loading" class="flex flex-col items-center justify-center h-screen bg-secondary">
-      <div
-        class="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mb-4"
-      ></div>
+      <div class="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mb-4"></div>
       <p class="text-gray-500 text-xl font-bold">Chargement...</p>
     </div>
 
@@ -117,38 +154,59 @@ export default {
       <p class="text-red-500 text-xl font-bold">{{ error }}</p>
     </div>
 
-    <!-- Pokémon trouvé -->
-    <div v-else-if="foundPokemon" class="flex justify-center mt-10">
-      <PokeCard :pokemon="foundPokemon" />
+    <!-- Sélecteur de Sprite -->
+    <div v-if="currentPokemon" class="flex flex-col items-center mt-10">
+      <SpriteSelector :sprites="getSprites(currentPokemon)" @sprite-selected="updatePokemonSprite" />
+      <button @click="closeSpriteSelector" class="mt-4 px-4 py-2 bg-red-500 text-white rounded">
+        Fermer
+      </button>
     </div>
 
-    <!-- Liste des Pokémon paginée -->
+    <!-- Pokémon trouvé -->
+    <div v-else-if="foundPokemon" class="flex flex-col items-center mt-10">
+      <PokeCard :pokemon="foundPokemon" />
+      <div class="flex gap-4 mt-4">
+        <button @click="addPokemonToCart(foundPokemon)"
+          class="bg-gray-400 text-xs text-white px-4 py-2 rounded-full hover:bg-gray-600">
+          Ajouter au panier
+        </button>
+        <button @click="openSpriteSelector(foundPokemon)"
+          class="bg-blue-500 text-xs text-white px-4 py-2 rounded-full hover:bg-blue-700">
+          Changer Sprite
+        </button>
+      </div>
+    </div>
+
     <div v-else class="bg-secondary mt-4">
-      <ul class="flex flex-wrap justify-center bg-secondary gap-4 p-4">
-        <li v-for="pokemon in pokemons" :key="pokemon.id">
-          <PokeCard :pokemon="pokemon" />
-        </li>
-      </ul>
+      <!-- Liste des Pokémon paginée -->
+      <div class="flex flex-wrap justify-center bg-secondary gap-4 p-4">
+        <div v-for="pokemon in pokemons" :key="pokemon.id" class="flex flex-col items-center">
+          <PokeCard :pokemon="pokemon" :sprites="pokemon.sprites" />
+          <div class="flex gap-4 mt-4">
+            <button @click="addPokemonToCart(pokemon)"
+              class="bg-gray-400 text-xs text-white px-4 py-2 rounded-full hover:bg-gray-600">
+              Ajouter au panier
+            </button>
+            <button @click="openSpriteSelector(pokemon)"
+              class="bg-blue-500 text-xs text-white px-4 py-2 rounded-full hover:bg-blue-700">
+              Changer Sprite
+            </button>
+          </div>
+        </div>
+      </div>
 
       <!-- Pagination -->
       <div class="flex justify-center mt-3 pb-12">
-        <button
-          @click="changePage(currentPage - 1)"
-          :disabled="currentPage === 1"
-          class="px-4 py-2 mx-2 bg-blue-500 text-white rounded disabled:opacity-50"
-        >
+        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1"
+          class="px-4 py-2 mx-2 bg-blue-500 text-white rounded disabled:opacity-50">
           Précédent
         </button>
         <span class="text-gray-900 px-4 py-2 mx-2">Page {{ currentPage }}</span>
-        <button
-          @click="changePage(currentPage + 1)"
-          :disabled="currentPage * pageSize >= total"
-          class="px-4 py-2 mx-2 bg-blue-500 text-white rounded disabled:opacity-50"
-        >
+        <button @click="changePage(currentPage + 1)" :disabled="currentPage * pageSize >= total"
+          class="px-4 py-2 mx-2 bg-blue-500 text-white rounded disabled:opacity-50">
           Suivant
         </button>
       </div>
     </div>
   </div>
 </template>
-

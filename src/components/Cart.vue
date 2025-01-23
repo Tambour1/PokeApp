@@ -19,17 +19,17 @@ export default {
     };
   },
   methods: {
-    // Supprime un item du panier
-    removeFromCart(itemId) {
-      this.cartStore.removeItem(itemId);
+    // Supprime un item du panier en fonction de l'ID et du sprite
+    removeFromCart(itemId, sprite) {
+      this.cartStore.removeItem(itemId, sprite);
     },
-    // Diminue la quantité d'un item
-    decreaseItemQuantity(itemId) {
-      this.cartStore.decreaseQuantity(itemId);
+    // Diminue la quantité d'un item en fonction de l'ID et du sprite
+    decreaseItemQuantity(itemId, sprite) {
+      this.cartStore.decreaseQuantity(itemId, sprite);
     },
-    // Augmente la quantité d'un item
-    increaseItemQuantity(itemId) {
-      this.cartStore.increaseQuantity(itemId);
+    // Augmente la quantité d'un item en fonction de l'ID et du sprite
+    increaseItemQuantity(itemId, sprite) {
+      this.cartStore.increaseQuantity(itemId, sprite);
     },
     // Vide le panier
     clearCart() {
@@ -53,8 +53,8 @@ export default {
       <!-- Liste des pokemons -->
       <ul class="space-y-6">
         <li v-for="pokemon in pokemonsInCart" :key="pokemon.id">
-          <CartCell :item="pokemon" @decrease="decreaseItemQuantity(pokemon.id)" @increase="increaseItemQuantity(pokemon.id)"
-            @remove="removeFromCart(pokemon.id)" />
+          <CartCell :item="pokemon" @decrease="decreaseItemQuantity(pokemon.id,pokemon.sprite)" @increase="increaseItemQuantity(pokemon.id, pokemon.sprite)"
+            @remove="removeFromCart(pokemon.id, pokemon.sprite)" />
         </li>
       </ul>
 

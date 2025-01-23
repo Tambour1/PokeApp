@@ -2,6 +2,7 @@
 import utilsMixin from '../mixins/utilsMixin';
 import cartPokemonMixin from '@/mixins/cartPokemonMixin';
 import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
+
 export default {
   name: "PokeCard",
   components: {
@@ -12,10 +13,6 @@ export default {
     pokemon: {
       type: Object,
       required: true,
-    },
-    isPreview: {
-      type: Boolean,
-      default: false,
     },
   },
   data() {
@@ -43,7 +40,7 @@ export default {
         stellar: "darkblue",
         unknown: "gray",
       },
-      primaryType: ""
+      primaryType: "",
     };
   },
   methods: {
@@ -60,7 +57,8 @@ export default {
 </script>
 
 <template>
-  <div class="flex flex-col justify-center w-72">
+  
+  <div class="flex flex-col justify-center w-72">    
     <div
       class="border-8 rounded-md border-yellow-200 p-4 h-96 transition-transform transform hover:scale-105 hover:rotate-2 hover:shadow-xl"
       :style="{ backgroundColor: pokemonColor }">
@@ -94,16 +92,10 @@ export default {
 
       <!-- Dans le panier -->
       <transition name="shopping-icon">
-        <ShoppingBagIcon v-if="isPokemonInCart(pokemon.id) && !isPreview" 
-        v-cart-icon="isPokemonInCart(pokemon.id)" 
-        class="left-4 bottom-3"/>
+        <ShoppingBagIcon v-if="isPokemonInCart(pokemon.id, pokemon.sprites.front_default)" v-cart-icon="isPokemonInCart(pokemon.id, pokemon.sprites.front_default)"
+          class="left-4 bottom-3" />
       </transition>
     </div>
-    <!-- Ajouter au panier -->
-    <button v-if="!isPreview" @click="addPokemonToCart(pokemon)"
-      class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600 my-5 mx-8">
-      Ajouter au panier
-    </button>
   </div>
 </template>
 
