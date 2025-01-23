@@ -41,6 +41,9 @@ export default {
           </div>
         </div>
 
+        <!-- Mes commandes -->
+        <RouterLink to="/orders" class="text-white font-semibold text-lg mr-8 hover:bg-transparent hover:text-gray-200">Mes commandes</RouterLink>
+
         <!-- Panier -->
         <div class="relative">
           <RouterLink to="/cart" class="hover:bg-transparent">

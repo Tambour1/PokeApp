@@ -3,6 +3,7 @@ import Pokemons from "@/components/Pokemons.vue";
 import PokemonDetails from "@/components/PokeDetails.vue";
 import Cart from "@/components/Cart.vue";
 import ConfirmCart from "@/components/ConfirmCart.vue";
+import Orders from "@/components/Orders.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,6 +29,11 @@ const router = createRouter({
       name: "ConfirmCart",
       component: ConfirmCart,
     },
+    {
+      path: "/orders",
+      name: "Orders",
+      component: Orders,
+    }
   ],
 });
 

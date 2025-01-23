@@ -81,7 +81,7 @@ export default {
       <div class="w-full font-pokemon bg-white rounded-lg shadow-lg overflow-hidden text-center mx-auto border border-gray-300 mt-10">
         <!-- Nom et numéro du pokemon -->
         <header class="bg-gray-200 flex items-center justify-between p-3">
-          <RouterLink class="text-gray-600 text-3xl cursor-pointer hover:bg-transparent" to="/">←</RouterLink>
+          <button class="text-gray-600 text-3xl cursor-pointer hover:bg-transparent" @click="$router.go(-1)">←</button>
           <h1 class="text-gray-800 text-xl">{{ firstCapitalLetter(pokemon.name) }}</h1>
           <span class="text-gray-800 text-xl">#{{ pokemon.id }}</span>
         </header>

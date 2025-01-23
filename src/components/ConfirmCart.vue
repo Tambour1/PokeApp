@@ -1,5 +1,6 @@
 <script>
 import { useCartStore } from '../stores/cartStore';
+import { useOrderStore } from '../stores/orderStore';
 import { RouterLink } from 'vue-router';
 import utilsMixin from '../mixins/utilsMixin';
 import cartPokemonMixin from '../mixins/cartPokemonMixin';
@@ -12,15 +13,27 @@ export default {
     },
     data() {
         const cartStore = useCartStore();
+        const orderStore = useOrderStore();
         return {
             cartStore,
+            orderStore,
             isOrder: false,
         };
     },
     methods: {
-        placeOrder() {
+        order() {
+            const order = {
+                date: new Date().toLocaleString(),
+                items: [...this.pokemonsInCart],
+                totalPrice: this.totalPricePokemonsInCart,
+            };
+
+            this.orderStore.addOrder(order);
             this.cartStore.clearCart();
             this.isOrder = true;
+            setTimeout(() => {
+                this.$router.push({ name: 'home' });
+            }, 1500);
         },
     },
 };
@@ -57,7 +70,7 @@ export default {
                 <div class="flex justify-around mt-12 text-center">
                     <RouterLink to="/" class="bg-blue-500 text-white px-6 py-3 rounded-full shadow hover:bg-blue-600">
                         Retour à l'accueil</RouterLink>
-                    <button @click="placeOrder"
+                    <button @click="order"
                         class="bg-green-500 text-white px-6 py-3 rounded-full shadow hover:bg-green-600">
                         Confirmer la commande
                     </button>
