@@ -32,8 +32,11 @@ const request = async (endpoint, method = 'GET', body = null, isAuthRequest = fa
         throw error;
     }
 };
+const getPokemons = () => {
+    return request('/pokemon?limit=100000&offset=0', 'GET');
+};
 
-const getPokemons = (limit, offset = 0) => {
+const getPokemonsPaginated = (limit, offset = 0) => {
     return request(`/pokemon?limit=${limit}&offset=${offset}`, 'GET');
 };  
 
@@ -45,4 +48,4 @@ const getPokemonById = (pokemonId) => {
     return request(`/pokemon/${pokemonId}`, 'GET');
 };
 
-export {getPokemons, getPokemonByName, getPokemonById};
+export {getPokemonsPaginated, getPokemonByName, getPokemonById, getPokemons};

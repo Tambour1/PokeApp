@@ -1,5 +1,5 @@
 <script>
-import { getPokemons, getPokemonByName } from "../../services/httpClient";
+import { getPokemonsPaginated, getPokemonByName, getPokemons } from "../../services/httpClient";
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import cartPokemonMixin from '@/mixins/cartPokemonMixin';
 import PokeCard from "./PokeCard.vue";
@@ -15,6 +15,7 @@ export default {
   },
   data() {
     return {
+      pokemonsPaginated: [],
       pokemons: [],
       loading: true,
       error: null,
@@ -22,24 +23,27 @@ export default {
       pageSize: 12,
       total: 0,
       search: "",
-      foundPokemon: null,
       currentPokemon: null,
+      isPaginated: false,
     };
   },
   methods: {
     // Récupère la liste des Pokémons
     async fetchPokemons() {
       try {
+        this.isPaginated = true;
         this.loading = true;
         const offset = (this.currentPage - 1) * this.pageSize;
-        const pokemonList = await getPokemons(this.pageSize, offset);
-        this.total = pokemonList.count;
+        const pokemonPaginatedList = await getPokemonsPaginated(this.pageSize, offset);
+        const pokemonList = await getPokemons();
+        this.pokemons = pokemonList.results;
+        this.total = pokemonPaginatedList.count;
 
-        const promises = pokemonList.results.map((pokemon) =>
+        const promises = pokemonPaginatedList.results.map((pokemon) =>
           fetch(pokemon.url).then((res) => res.json())
         );
         const pokemonsData = await Promise.all(promises);
-        this.pokemons = pokemonsData;
+        this.pokemonsPaginated = pokemonsData;
         this.foundPokemon = null;
       } catch (error) {
         this.error = "Impossible de récupérer la liste des Pokémons.";
@@ -49,6 +53,7 @@ export default {
     },
     // Recherche un Pokémon par son nom
     async searchPokemon() {
+      this.isPaginated = false;
       if (!this.search.trim()) {
         this.error = "Veuillez saisir un nom de Pokémon.";
         return;
@@ -56,15 +61,26 @@ export default {
 
       try {
         this.loading = true;
-        this.foundPokemon = await getPokemonByName(this.search.toLowerCase());
+
+        const filteredNames = this.pokemons
+          .map((pokemon) => pokemon.name)
+          .filter((name) =>
+            name.toLowerCase().includes(this.search.toLowerCase())
+          );
+
+        const promises = filteredNames.map((name) =>
+          getPokemonByName(name)
+        );
+        this.pokemonsPaginated = await Promise.all(promises);
         this.error = null;
       } catch (error) {
-        this.error = "Pokémon introuvable.";
-        this.foundPokemon = null;
+        this.error = "Une erreur s'est produite lors de la recherche.";
+        this.pokemons = [];
       } finally {
         this.loading = false;
       }
     },
+
     // Change la page courante
     changePage(newPage) {
       this.currentPage = newPage;
@@ -73,7 +89,6 @@ export default {
     // Réinitialise la recherche
     clearSearch() {
       this.search = "";
-      this.foundPokemon = null;
       this.fetchPokemons();
     },
     // Récupère tous les sprites d'un Pokémon
@@ -161,26 +176,11 @@ export default {
         Fermer
       </button>
     </div>
-
-    <!-- Pokémon trouvé -->
-    <div v-else-if="foundPokemon" class="flex flex-col items-center mt-10">
-      <PokeCard :pokemon="foundPokemon" />
-      <div class="flex gap-4 mt-4">
-        <button @click="addPokemonToCart(foundPokemon)"
-          class="bg-gray-400 text-xs text-white px-4 py-2 rounded-full hover:bg-gray-600">
-          Ajouter au panier
-        </button>
-        <button @click="openSpriteSelector(foundPokemon)"
-          class="bg-blue-500 text-xs text-white px-4 py-2 rounded-full hover:bg-blue-700">
-          Changer Sprite
-        </button>
-      </div>
-    </div>
-
+    
     <div v-else class="bg-secondary mt-4">
       <!-- Liste des Pokémon paginée -->
       <div class="flex flex-wrap justify-center bg-secondary gap-4 p-4">
-        <div v-for="pokemon in pokemons" :key="pokemon.id" class="flex flex-col items-center">
+        <div v-for="pokemon in pokemonsPaginated" :key="pokemon.id" class="flex flex-col items-center">
           <PokeCard :pokemon="pokemon" :sprites="pokemon.sprites" />
           <div class="flex gap-4 mt-4">
             <button @click="addPokemonToCart(pokemon)"
@@ -196,7 +196,7 @@ export default {
       </div>
 
       <!-- Pagination -->
-      <div class="flex justify-center mt-3 pb-12">
+      <div v-if="isPaginated" class="flex justify-center mt-3 pb-12">
         <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1"
           class="px-4 py-2 mx-2 bg-blue-500 text-white rounded disabled:opacity-50">
           Précédent

@@ -2,6 +2,7 @@
 import utilsMixin from '../mixins/utilsMixin';
 import cartPokemonMixin from '@/mixins/cartPokemonMixin';
 import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
+import defaultSprite from '@/assets/no-pokemon.png';
 
 export default {
   name: "PokeCard",
@@ -49,6 +50,11 @@ export default {
       return this.typeColors[type] || "white";
     },
   },
+  computed: {
+    defaultSprite() {
+      return this.pokemon.sprites.front_default || defaultSprite;
+    },
+  },
   mounted() {
     this.primaryType = this.pokemon.types[0].type.name;
     this.pokemonColor = this.getTypeColor(this.primaryType);
@@ -58,20 +64,20 @@ export default {
 
 <template>
   
-  <div class="flex flex-col justify-center w-72">    
+  <div class="flex flex-col justify-center w-72">
     <div
       class="border-8 rounded-md border-yellow-200 p-4 h-96 transition-transform transform hover:scale-105 hover:rotate-2 hover:shadow-xl"
       :style="{ backgroundColor: pokemonColor }">
 
       <!-- Nom du Pokémon et icône de type -->
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold text-white">{{ firstCapitalLetter(pokemon.name) }}</h2>
+        <h2 :class="pokemon.name.length > 15 ? 'text-base' :'text-xl'" class="font-bold text-white">{{ firstCapitalLetter(pokemon.name) }}</h2>
         <img :src="`/src/assets/types-icons/${primaryType}.png`" alt="Type Icon" width="30" height="30" class="ml-2" />
       </div>
 
       <!-- Image du Pokémon -->
-      <img width="150" :src="pokemon.sprites.front_default" :alt="pokemon.name"
-        class="bg-white mx-auto border-4 rounded-md border-gray-300 cursor-pointer"
+      <img :src="defaultSprite" :alt="pokemon.name"
+        class=" w-34 h-32 bg-white mx-auto border-4 rounded-md border-gray-300 cursor-pointer"
         @click="$router.push({ name: 'PokeDetails', params: { id: pokemon.id } })" />
 
       <!-- Informations du Pokémon -->
