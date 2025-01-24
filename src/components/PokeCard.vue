@@ -78,7 +78,7 @@ export default {
       <!-- Image du Pokémon -->
       <img :src="defaultSprite" :alt="pokemon.name"
         class=" w-34 h-32 bg-white mx-auto border-4 rounded-md border-gray-300 cursor-pointer"
-        @click="$router.push({ name: 'PokeDetails', params: { id: pokemon.id } })" />
+        @click="$router.push({ name: 'PokeDetails', params: { id: pokemon.id, sprite: pokemon.sprites.front_default } })" />
 
       <!-- Informations du Pokémon -->
       <div class="flex items-center justify-around bg-gray-100 rounded-md mt-1 text-gray-500 text-xs p-1">
