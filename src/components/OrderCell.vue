@@ -22,7 +22,7 @@ export default {
             <ul>
                 <li v-for="item in order.items" :key="item.id"
                     class="flex items-center justify-between text-gray-700 rounded-lg bg-gray-100 border mt-2 p-2">
-                    <img :src="item.sprite" :alt="item.name" @click="$router.push({ name: 'PokeDetails', params: { id: item.id } })" class="w-12 h-12 object-cover cursor-pointer" />
+                    <img :src="item.sprite" :alt="item.name" @click="$router.push({ name: 'PokeDetails', params: { id: item.id, sprite: item.sprite } })" class="w-12 h-12 object-cover cursor-pointer" />
                     <p>{{ item.name }} x{{ item.quantity }}</p>
                     <p>{{ convertPrice(item.price * item.quantity) }}</p>
                 </li>

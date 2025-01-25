@@ -32,7 +32,7 @@ export default {
         <!-- Image et Nom -->
         <div class="w-56 flex items-center justify-between">
             <img :src="item.sprite" :alt="item.name"
-                @click="$router.push({ name: 'PokeDetails', params: { id: item.id } })"
+                @click="$router.push({ name: 'PokeDetails', params: { id: item.id, sprite: item.sprite } })"
                 class="cursor-pointer w-32 h-32" />
             <p class="text-lg font-semibold text-gray-500">{{ item.name }}</p>
         </div>

@@ -5,6 +5,7 @@ import utilsMixin from "@/mixins/utilsMixin";
 import cartPokemonMixin from "@/mixins/cartPokemonMixin";
 import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
 import PokeCard from "./PokeCard.vue";
+import SpriteSelector from './SpriteSelector.vue';
 export default {
   name: "PokeDetails",
   mixins: [utilsMixin, cartPokemonMixin],
@@ -12,6 +13,7 @@ export default {
     RouterLink,
     ShoppingBagIcon,
     PokeCard,
+    SpriteSelector,
   },
   props: {
     id: {
@@ -30,15 +32,18 @@ export default {
       loading: true,
       error: null,
       showPreview: false,
+      currentPokemon: null,
+      currentSprite: null,
     };
   },
   methods: {
+    // Récupère les infos du Pokémon
     async fetchPokemonDetails() {
       try {
         const response = await getPokemonById(this.id);
         this.pokemon = await response;
         //Changement du sprite dans l'apercu
-        if(this.pokemon.sprites.front_default) this.pokemon.sprites.front_default = this.sprite
+        if (this.pokemon.sprites.front_default) this.pokemon.sprites.front_default = this.sprite
         this.loading = false;
         const icons = await Promise.all(
           this.pokemon.types.map(async (type) => {
@@ -57,10 +62,19 @@ export default {
         this.loading = false;
       }
     },
+    // Change la couleur des stats
     getStatColor(baseStat) {
       if (baseStat > 100) return "#4caf50";
       if (baseStat > 50) return "#ffc107";
       return "#f44336";
+    },
+    // Met à jour le sprite du Pokémon
+    updatePokemonSprite(sprite) {
+      this.currentSprite = sprite;
+      if (this.currentPokemon) {
+        this.currentPokemon.sprites.front_default = sprite;
+      }
+      this.closeSpriteSelector();
     },
   },
   mounted() {
@@ -81,6 +95,13 @@ export default {
     <p class="text-red-500 text-xl font-bold">{{ error }}</p>
   </div>
 
+  <div v-if="currentPokemon" class="flex flex-col items-center mt-10">
+    <SpriteSelector :sprites="getSprites(currentPokemon)" @sprite-selected="updatePokemonSprite" />
+    <button @click="closeSpriteSelector" class="mt-4 px-4 py-2 bg-red-500 text-white rounded">
+      Fermer
+    </button>
+  </div>
+
   <!-- PokemonDétails -->
   <div v-else class="flex justify-center px-4 sm:px-0">
     <div class="flex flex-col w-full sm:w-8/12 md:w-6/12 lg:w-4/12">
@@ -89,13 +110,14 @@ export default {
         <!-- Nom et numéro du pokemon -->
         <header class="bg-gray-200 flex items-center justify-between p-3">
           <button class="text-gray-600 text-3xl cursor-pointer hover:bg-transparent" @click="$router.go(-1)">←</button>
-          <h1 class="text-gray-800 text-xl">{{ firstCapitalLetter(pokemon.name) }}</h1>
+          <h1 v-if="pokemon.name" class="text-gray-800 text-xl">{{ firstCapitalLetter(pokemon.name) }}</h1>
           <span class="text-gray-800 text-xl">#{{ pokemon.id }}</span>
         </header>
 
         <!-- L'image du pokemon -->
-        <img :src="sprite" :alt="pokemon.name" class="w-52 h-52 m-auto mt-6 cursor-pointer sm:w-40 sm:h-40"
-          @mouseover="this.showPreview = true" @mouseleave="this.showPreview = false" />
+        <img :src="currentSprite || sprite" :alt="pokemon.name"
+          class="w-52 h-52 m-auto mt-6 cursor-pointer sm:w-40 sm:h-40" @mouseover="this.showPreview = true"
+          @mouseleave="this.showPreview = false" />
 
         <!-- Les types -->
         <div class="flex justify-center mb-4 space-x-8 relative flex-wrap">
@@ -103,8 +125,8 @@ export default {
             class="w-16 h-6" />
           <!-- Dans le panier -->
           <transition name="shopping-icon">
-            <ShoppingBagIcon v-if="isPokemonInCart(pokemon.id)" v-cart-icon="isPokemonInCart(pokemon.id)"
-              class="right-6" />
+            <ShoppingBagIcon v-if="isPokemonInCart(pokemon.id, currentSprite || sprite)"
+              v-cart-icon="isPokemonInCart(pokemon.id, currentSprite || sprite)" class="right-6" />
           </transition>
         </div>
 
@@ -138,13 +160,20 @@ export default {
         </div>
       </div>
 
+
       <!-- Ajouter au panier -->
-      <div class="flex justify-center">
+      <div class="flex justify-center gap-4 mt-4">
         <button @click="addPokemonToCart(pokemon)"
-          class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600 mt-5">
+          class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-gray-600">
           Ajouter au panier
         </button>
+
+        <button @click="openSpriteSelector(pokemon)"
+          class="bg-blue-500 text-xs text-white px-4 py-2 rounded-full hover:bg-blue-700">
+          Changer Sprite
+        </button>
       </div>
+
     </div>
 
     <!-- Aperçu de la carte-->

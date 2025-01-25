@@ -42,8 +42,19 @@ export default {
         const promises = pokemonPaginatedList.results.map((pokemon) =>
           fetch(pokemon.url).then((res) => res.json())
         );
+
         const pokemonsData = await Promise.all(promises);
-        this.pokemonsPaginated = pokemonsData;
+
+        this.pokemonsPaginated = pokemonsData.map((pokemonData) => ({
+          id: pokemonData.id,
+          name: pokemonData.name,
+          sprites: pokemonData.sprites,
+          types: pokemonData.types,
+          height: pokemonData.height,
+          weight: pokemonData.weight,
+          base_experience: pokemonData.base_experience,
+        }));
+
         this.foundPokemon = null;
       } catch (error) {
         this.error = "Impossible de récupérer la liste des Pokémons.";
@@ -90,38 +101,6 @@ export default {
     clearSearch() {
       this.search = "";
       this.fetchPokemons();
-    },
-    // Récupère tous les sprites d'un Pokémon
-    getSprites(pokemon) {
-      const allSprites = [];
-
-      if (pokemon.sprites.front_default) {
-        allSprites.push(pokemon.sprites.front_default);
-      }
-
-      if (pokemon.sprites.front_shiny) {
-        allSprites.push(pokemon.sprites.front_shiny);
-      }
-
-      if (pokemon.sprites.versions) {
-        Object.values(pokemon.sprites.versions).forEach((generation) => {
-          Object.values(generation).forEach((version) => {
-            if (version?.front_default) {
-              allSprites.push(version.front_default);
-            }
-          });
-        });
-      }
-
-      return allSprites;
-    },
-    // Ouvre le sélecteur de sprite
-    openSpriteSelector(pokemon) {
-      this.currentPokemon = pokemon;
-    },
-    // Ferme le sélecteur de sprite
-    closeSpriteSelector() {
-      this.currentPokemon = null;
     },
     // Met à jour le sprite du Pokémon
     updatePokemonSprite(sprite) {
@@ -176,7 +155,7 @@ export default {
         Fermer
       </button>
     </div>
-    
+
     <div v-else class="bg-secondary mt-4">
       <!-- Liste des Pokémon paginée -->
       <div class="flex flex-wrap justify-center bg-secondary gap-4 p-4">
