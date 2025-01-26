@@ -36,8 +36,8 @@ const getPokemons = () => {
     return request('/pokemon?limit=100000&offset=0', 'GET');
 };
 
-const getPokemonsPaginated = (limit, offset = 0) => {
-    return request(`/pokemon?limit=${limit}&offset=${offset}`, 'GET');
+const getPokemonsPaginated = () => {
+    return request('/pokemon', 'GET');
 };  
 
 const getPokemonByName = (pokemonName) => {
@@ -48,4 +48,8 @@ const getPokemonById = (pokemonId) => {
     return request(`/pokemon/${pokemonId}`, 'GET');
 };
 
-export {getPokemonsPaginated, getPokemonByName, getPokemonById, getPokemons};
+const getTypes = () => {
+    return request('/type', 'GET');
+}
+
+export {getPokemonsPaginated, getPokemonByName, getPokemonById, getPokemons, getTypes};
