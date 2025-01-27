@@ -32,8 +32,7 @@ export default {
         </div>
 
         <div v-else>
-            <!-- Grille pour afficher les OrderCell -->
-            <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <ul class="flex flex-wrap gap-6 justify-center">
                 <li v-for="(order, index) in orders" :key="index">
                     <OrderCell :order="order" />
                 </li>
@@ -41,4 +40,5 @@ export default {
         </div>
     </div>
 </template>
+
 

@@ -33,10 +33,10 @@ export default {
         </div>
 
         <!-- Notifications -->
-        <div class="flex-1 flex justify-center relative">
-          <div class="absolute top-px left-1/2 transform -translate-x-1/2 z-20">
+        <div class="flex-1 flex justify-center">
+          <div class="absolute top-px left-1/2 transform -translate-x-1/2 top-[1.5em]">
             <div v-for="notification in notificationStore.notifications" :key="notification.id" class="mb-2">
-              <Notification :message="notification.message" />
+              <Notification :message="notification.message" :type="notification.type" />
             </div>
           </div>
         </div>

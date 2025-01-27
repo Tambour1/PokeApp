@@ -16,6 +16,11 @@ export default {
     firstCapitalLetter(string) {
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
+    // Garde le chargement
+    async keepLoading() {
+      await new Promise((resolve) => setTimeout(resolve, 999999));
+    },
+    
     // Récupère tous les sprites d'un Pokémon
     getSprites(pokemon) {
       const allSprites = [];
