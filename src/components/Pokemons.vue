@@ -4,6 +4,7 @@ import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
 import cartPokemonMixin from '@/mixins/cartPokemonMixin';
 import PokeCard from "./PokeCard.vue";
 import SpriteSelector from './SpriteSelector.vue';
+import { useNotificationStore } from '../stores/notificationStore';
 
 export default {
   name: "Pokemons",
@@ -14,6 +15,7 @@ export default {
     SpriteSelector,
   },
   data() {
+    const notificationStore = useNotificationStore();
     return {
       pokemonsPaginated: [], // tous les pokemons paginés
       nextPage: null, // url de la page suivante
@@ -40,7 +42,7 @@ export default {
       pageSize: 10, // nombre de pokemons par page type ou recherche
 
       loading: false,
-      error: null,
+      notificationStore,
     };
   },
   methods: {
@@ -63,10 +65,11 @@ export default {
         const pokemonList = await getPokemons();
         this.pokemons = pokemonList.results;
 
-        this.error = null;
       } catch (error) {
-        this.error = "Impossible de récupérer la liste des Pokémons.";
+        this.notificationStore.addNotification("Erreur lors du chargement des Pokémons", "error");
+        console.error("Erreur lors du chargement des Pokémons: " + error);
         this.pokemonsPaginated = [];
+        await this.keepLoading();
       } finally {
         this.loading = false;
       }
@@ -78,7 +81,7 @@ export default {
 
       // Vérifie si le champ de recherche est vide
       if (!this.search.trim()) {
-        this.error = "Veuillez saisir un nom de Pokémon.";
+        this.notificationStore.addNotification("Veuillez entrer un nom de Pokémon", "error");
         return;
       }
 
@@ -90,7 +93,12 @@ export default {
         // Filtrer les noms correspondant à la recherche
         const filteredNames = this.pokemons
           .map((pokemon) => pokemon.name)
-          .filter((name) => name.toLowerCase().includes(this.search.toLowerCase()));
+          .filter((name) => name.toLowerCase().includes(this.search.trim().toLowerCase()));
+
+        // Vérifie si aucune correspondance n'a été trouvée
+        if (filteredNames.length === 0) {
+          throw new Error("$");
+        }
 
         this.nbPokemonsSearch = filteredNames.length;
 
@@ -101,10 +109,12 @@ export default {
         this.pokemonsSearchPaginated = await Promise.all(promises);
 
         this.searchDone = true;
-        this.error = null;
       } catch (error) {
-        this.error = "Une erreur s'est produite lors de la recherche.";
+        const errorMessage = error.message === "$" ? "Aucun Pokemon trouvé avec ce nom" : "Erreur lors de la recherche";
+        this.notificationStore.addNotification(errorMessage, "error");
+        console.error(errorMessage + ": " + error);
         this.pokemonsSearchPaginated = [];
+        await this.keepLoading();
       } finally {
         this.loading = false;
       }
@@ -122,7 +132,12 @@ export default {
         if (typeData) {
           // Récupération des données des pokemons du type
           const typeDetail = await fetch(typeData.url).then((res) => res.json());
+
           this.nbPokemonsByType = typeDetail.pokemon.length;
+          if (this.nbPokemonsByType === 0) {
+            throw new Error("$");
+          }
+
           const pokemonsInType = typeDetail.pokemon.slice(start, start + end);
 
           const promises = pokemonsInType.map((p) =>
@@ -132,10 +147,12 @@ export default {
           this.pokemonsByTypePaginated = await this.mapPokemonData(promises);
         }
 
-        this.error = null;
       } catch (error) {
-        this.error = "Erreur lors du chargement des Pokémon par type.";
+        const errorMessage = error.message === "$" ? "Aucun Pokemon trouvé avec ce type" : "Erreur lors du chargement des Pokémon par type";
+        this.notificationStore.addNotification(errorMessage, "error");
+        console.error(errorMessage + ": " + error);
         this.pokemonsByTypePaginated = [];
+        await this.keepLoading();
       } finally {
         this.loading = false;
       }
@@ -185,6 +202,7 @@ export default {
 
     // Recupère les pokemons par type selectionné
     async onTypeChange() {
+      this.resetPagination();
       if (this.selectedType) {
         await this.filterByType(this.selectedType);
       } else {
@@ -196,9 +214,7 @@ export default {
     clearSearch() {
       this.search = "";
       this.searchDone = false;
-      this.apiCurrentPage = 1;
-      this.typeCurrentPage = 1;
-      this.searchCurrentPage = 1;
+      this.resetPagination();
       this.fetchPokemons();
     },
 
@@ -208,6 +224,16 @@ export default {
         this.currentPokemon.sprites.front_default = sprite;
       }
       this.closeSpriteSelector();
+    },
+
+    // Réinitialisation de tous les paramètres liés à la pagination
+    resetPagination() {
+      this.apiCurrentPage = 1;
+      this.typeCurrentPage = 1;
+      this.searchCurrentPage = 1;
+      this.nbPokemonsSearch = 0;
+      this.nbPokemonsByType = 0;
+      this.totalPokemon = 0;
     },
   },
   computed: {
@@ -245,6 +271,7 @@ export default {
     search(newSearch) {
       if (!newSearch) {
         this.pokemonsSearchPaginated = [];
+        this.searchDone = false;
       }
     }
   },
@@ -294,10 +321,6 @@ export default {
       <p class="text-gray-500 text-xl font-bold">Chargement...</p>
     </div>
 
-    <!-- Error -->
-    <div v-else-if="error" class="flex items-center justify-center h-screen">
-      <p class="text-red-500 text-xl font-bold">{{ error }}</p>
-    </div>
 
     <!-- Sélecteur de Sprite -->
     <div v-if="currentPokemon" class="flex flex-col items-center mt-10">
@@ -327,7 +350,7 @@ export default {
 
       <!-- Pagination -->
       <div
-        v-if="(pokemonsPaginated.length > 0 || pokemonsByTypePaginated.length > 0 || pokemonsSearchPaginated.length > 0) && !loading"
+        v-if="totalPages !== 1"
         class="flex justify-center mt-3 pb-12">
         <button @click="previousPageHandler" :disabled="currentPage === 1"
           class="px-4 py-2 mx-2 bg-blue-500 text-white rounded disabled:opacity-50">
@@ -339,7 +362,7 @@ export default {
         </span>
 
         <button @click="nextPageHandler"
-          :disabled="currentPage === Math.ceil(totalPokemon / 20) || typeCurrentPage === Math.ceil(nbPokemonsByType / pageSize) || searchCurrentPage === Math.ceil(nbPokemonsSearch / pageSize)"
+          :disabled="apiCurrentPage === Math.ceil(totalPokemon / 20) || typeCurrentPage === Math.ceil(nbPokemonsByType / pageSize) || searchCurrentPage === Math.ceil(nbPokemonsSearch / pageSize)"
           class="px-4 py-2 mx-2 bg-blue-500 text-white rounded disabled:opacity-50">
           Suivant
         </button>

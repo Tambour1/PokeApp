@@ -1,6 +1,7 @@
 <script>
 import { useCartStore } from '../stores/cartStore';
 import { useOrderStore } from '../stores/orderStore';
+import { useNotificationStore } from '../stores/notificationStore';
 import { RouterLink } from 'vue-router';
 import utilsMixin from '../mixins/utilsMixin';
 import cartPokemonMixin from '../mixins/cartPokemonMixin';
@@ -14,9 +15,11 @@ export default {
     data() {
         const cartStore = useCartStore();
         const orderStore = useOrderStore();
+        const notificationStore = useNotificationStore();
         return {
             cartStore,
             orderStore,
+            notificationStore,
             isOrder: false,
         };
     },
@@ -30,6 +33,7 @@ export default {
 
             this.orderStore.addOrder(order);
             this.cartStore.clearCart();
+            this.notificationStore.addNotification("Commande enregistrée");
             this.isOrder = true;
             setTimeout(() => {
                 this.$router.push({ name: 'home' });
@@ -49,7 +53,8 @@ export default {
         <div v-else class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-6">
             <!-- Résumé des pokemon -->
             <ul class="space-y-4">
-                <li v-for="pokemon in pokemonsInCart" :key="pokemon.id" class="flex justify-between items-center border-b py-2">
+                <li v-for="pokemon in pokemonsInCart" :key="pokemon.id"
+                    class="flex justify-between items-center border-b py-2">
                     <span class="font-semibold text-gray-700">{{ pokemon.name }} x{{ pokemon.quantity }}</span>
                     <span class="text-gray-700">{{ convertPrice(pokemon.price * pokemon.quantity) }}</span>
                 </li>
@@ -81,7 +86,7 @@ export default {
     <!-- Message de la commande  -->
     <div v-else>
         <div class="bg-white rounded-lg shadow-lg p-6 mt-6">
-            <p class="text-xl text-center text-green-500">Votre commande a bien été enregistrée !</p>
+            <p class="text-xl text-center text-green-500">Votre commande a bien été passée !</p>
         </div>
     </div>
 </template>

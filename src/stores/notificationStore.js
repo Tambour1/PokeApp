@@ -7,13 +7,13 @@ export const useNotificationStore = defineStore("notification", {
 
   actions: {
     // Ajout d'une notification
-    addNotification(message) {
+    addNotification(message, type="success") {
       const id = Date.now();
-      this.notifications.push({ id, message });
+      this.notifications.push({ id, message, type });
 
       setTimeout(() => {
         this.removeNotification(id);
-      }, 3000);
+      }, 4000);
     },
     // Suppression d'une notification
     removeNotification(id) {

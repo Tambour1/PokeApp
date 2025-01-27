@@ -6,6 +6,7 @@ import cartPokemonMixin from "@/mixins/cartPokemonMixin";
 import { ShoppingBagIcon } from '@heroicons/vue/24/solid';
 import PokeCard from "./PokeCard.vue";
 import SpriteSelector from './SpriteSelector.vue';
+import { useNotificationStore } from "@/stores/notificationStore";
 export default {
   name: "PokeDetails",
   mixins: [utilsMixin, cartPokemonMixin],
@@ -26,29 +27,35 @@ export default {
     },
   },
   data() {
+    const notificationStore = useNotificationStore();
     return {
       pokemon: {},
       typesSprites: [],
-      loading: true,
-      error: null,
+      loading: false,
       showPreview: false,
       currentPokemon: null,
       currentSprite: null,
+      notificationStore,
     };
   },
   methods: {
     // Récupère les infos du Pokémon
     async fetchPokemonDetails() {
       try {
+        this.loading = true;
+
+        // Récupération des détails du Pokémon
         const response = await getPokemonById(this.id);
         this.pokemon = await response;
+
         //Changement du sprite dans l'apercu
         if (this.pokemon.sprites.front_default) this.pokemon.sprites.front_default = this.sprite
-        this.loading = false;
+
         const icons = await Promise.all(
           this.pokemon.types.map(async (type) => {
             const response = await fetch(type.type.url);
             const data = await response.json();
+            // Récupération de l'icone du type
             const icon = data.sprites["generation-iv"]["diamond-pearl"].name_icon
               ? data.sprites["generation-iv"]["diamond-pearl"].name_icon
               : data.sprites["generation-vii"]["ultra-sun-ultra-moon"].name_icon;
@@ -56,16 +63,20 @@ export default {
             return icon;
           })
         );
+
         this.typesSprites = icons;
       } catch (error) {
-        this.error = "Impossible de récupérer les détails du Pokémon.";
+        this.notificationStore.addNotification("Impossible d'accéder aux détails du Pokémon", "error");
+        console.error("Impossible d'accéder aux détails du Pokémon: " + error);
+        await this.keepLoading();
+      } finally {
         this.loading = false;
       }
     },
     // Change la couleur des stats
-    getStatColor(baseStat) {
-      if (baseStat > 100) return "#4caf50";
-      if (baseStat > 50) return "#ffc107";
+    getStatColor(stat) {
+      if (stat >= 80) return "#4caf50";
+      if (stat >= 50) return "#ffc107";
       return "#f44336";
     },
     // Met à jour le sprite du Pokémon
@@ -88,11 +99,6 @@ export default {
   <div v-if="loading" class="flex flex-col items-center justify-center h-screen bg-secondary">
     <div class="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mb-4"></div>
     <p class="text-gray-500 text-xl font-bold">Chargement...</p>
-  </div>
-
-  <!-- Error -->
-  <div v-else-if="error" class="flex items-center justify-center">
-    <p class="text-red-500 text-xl font-bold">{{ error }}</p>
   </div>
 
   <div v-if="currentPokemon" class="flex flex-col items-center mt-10">
@@ -159,7 +165,6 @@ export default {
           </div>
         </div>
       </div>
-
 
       <!-- Ajouter au panier -->
       <div class="flex justify-center gap-4 mt-4">

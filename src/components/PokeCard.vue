@@ -72,7 +72,7 @@ export default {
       <!-- Nom du Pokémon et icône de type -->
       <div class="flex items-center justify-between mb-4">
         <h2 :class="pokemon.name.length > 15 ? 'text-base' :'text-xl'" class="font-bold text-white">{{ firstCapitalLetter(pokemon.name) }}</h2>
-        <img :src="`/src/assets/types-icons/${primaryType}.png`" alt="Type Icon" width="30" height="30" class="ml-2" />
+        <img :src="`/assets/types-icons/${primaryType}.png`" alt="Type Icon" width="30" height="30" class="ml-2" />
       </div>
 
       <!-- Image du Pokémon -->
