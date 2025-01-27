@@ -170,7 +170,7 @@ export default {
 
         <button @click="openSpriteSelector(pokemon)"
           class="bg-blue-500 text-xs text-white px-4 py-2 rounded-full hover:bg-blue-700">
-          Changer Sprite
+          Changer Image
         </button>
       </div>
 
