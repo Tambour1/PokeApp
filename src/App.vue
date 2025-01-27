@@ -28,8 +28,9 @@ export default {
     <header class="bg-primary text-white px-8 py-2 shadow-md sticky top-0 z-10">
       <nav class="flex justify-between items-center relative">
         <!-- Pokeapp -->
-        <div class="text-3xl font-bold">
-          <RouterLink to="/" class="text-white hover:text-gray-200 hover:bg-transparent">PokeAPP</RouterLink>
+        <div class="text-3xl font-bold flex items-center space-x-2">
+          <img src="/public/assets/pokeball.png" alt="logo Pokeball" class="w-12">
+          <RouterLink to="/" class="text-white hover:text-gray-200 hover:bg-transparent">PokeApp</RouterLink>
         </div>
 
         <!-- Notifications -->
