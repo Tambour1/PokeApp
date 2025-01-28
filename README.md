@@ -1,9 +1,9 @@
 # PokeApp
 # 📝 Tables des matières
-- [Description](#🧐description)
-- [Installation](#🚀installation)
-- [Outils](#⛏️outils)
-- [Lien](#🔗lien)
+- [Description](#description)
+- [Installation](#installation)
+- [Outils](#outils)
+- [Lien](#lien)
 
 # 🧐 Description
 Cette application a été réalisée par **Victor GEORGES**, étudiant de BUT 3 Informatique à l'IUT Nancy-Charlemagne, dans le cadre d'un cours de développement web client avancé.
